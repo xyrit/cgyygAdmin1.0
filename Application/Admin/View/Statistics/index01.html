@@ -1,0 +1,187 @@
+<extend name="Public/base"/>
+
+<block name="body">
+	<div class="main-title">
+		<h2>{$title}(今天是{$dtime})</h2>
+	</div>
+	<!-- 高级搜索 -->
+		<div class="search-form fr cf">
+			<div class="sleft">
+				<div class="drop-down">
+					<span id="sch-sort-txt" class="sort-txt" data="{$status}"><if condition="get_status_title_bymodel($status,'audit') eq ''">所有<else/>{:get_status_title_bymodel($status,'audit')}</if></span>
+					<i class="arrow arrow-down"></i>
+					<ul id="sub-sch-menu" class="nav-list hidden" name = 'status'>
+						<li><a href="javascript:;" value="1">已通过</a></li>
+						<li><a href="javascript:;" value="2">已拒绝</a></li>	
+                        
+					</ul>
+				</div>
+				<input type="text" name="input" class="search-input" value="" placeholder="请输入用户名或ID">
+				<a class="sch-btn" href="javascript:;" id="search" url="{:U('Audit/showAuditedComment')}"><i class="btn-search"></i></a>
+			</div>
+            <div class="btn-group-click adv-sch-pannel fl">
+                <button class="btn">高 级<i class="btn-arrowdown"></i></button>
+                <div class="dropdown cf">
+                	<div class="row">
+                		<label>申请时间：</label>
+                		<input type="text" id="start_time" name="start_time" class="text input-2x" value="" placeholder="起始时间" /> -
+                		<input type="text" id="end_time" name="end_time" class="text input-2x" value="" placeholder="结束时间" />
+                	</div>
+                	<div class="row">
+                		<label>审核人：</label>
+                		<input type="text" name="audit_name" class="text input-2x" value="" placeholder="请输入用户名">
+                	</div>
+                </div>
+            </div>
+		</div>
+	 <style type="text/css">
+	#test li{
+		float:left;
+		width:100px;
+	}
+	</style>
+	<ul id='test'>
+		<li><input type="radio" name="type" value="1" checked="checked"/>新增用户</li>
+		<li><input type="radio" name="type" value="2" />访问次数</li>
+		<li><input type="radio" name="type" value="3" />活跃用户</li>
+		<li><input type="radio" name="type" value="4" />充值用户</li>
+		<li><input type="radio" name="type" value="5" />充值总额</li>
+		<li><input type="radio" name="type" value="6" />ARPPU</li>
+		<li><input type="radio" name="type" value="7" />新增付费用户</li>
+		<li><input type="radio" name="type" value="8" />消费用户</li>
+		<li><input type="radio" name="type" value="9" />消费总额</li>
+		<li><input type="radio" name="type" value="10" />消费ARPPU</li>
+	</ul>
+	<div class="data-table table-striped"><div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+	<!-- 我自己的js -->
+    <script type="text/javascript" src="http://libs.baidu.com/jquery/1.9.0/jquery.js">
+    $(function () {
+	    $("#test01").css("background-color:","red");
+    });
+    </script>
+<script type="text/javascript">
+$(function () {
+    $('#container').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: 1,//null,
+            plotShadow: false
+        },
+        title: {
+            text: '{$title}'
+        },
+        tooltip: {
+    	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                       color: 'deeppink',
+									fontSize: '14px',
+									padding: '4px'
+                    }
+                }
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: '占比',
+            data: [
+                ['退货{$back}元 ',   {$b}],
+                ['换货{$change}元 ',      {$c}],
+				 ['申请取消{$cancel}元 ',      {$d}],
+                {
+                    name: '销售额{$total}元 ',
+                    y: {$a},
+                    sliced: true,
+                    selected: true
+                },
+                
+               
+            ]
+        }]
+    });
+});
+    
+
+		</script>	
+<!--  <p style="height:30px;margin:10px;color:deeppink;font-size:16px">利润：{$total|default="0"}-{$back|default="0"}-{$change|default="0"}-{$cancel|default="0"}={$profits|default="0"}元</p> -->
+<tr>
+	<td>新增用户总数：<font color="green">{$new_people_sum|default="0"}</font></td> &nbsp;&nbsp;
+	<td>充值用户总数：<font color="green">{$recharge_people_sum|default="0"}</font></td> &nbsp;&nbsp;
+	<td>充值总额：<font color="green">{$recharge_sum|default="0"}</font></td> &nbsp;&nbsp;
+	<td>ARPPU:<font color="green">{$recharge_arppu|default="0"}</font></td> &nbsp;&nbsp;
+	<td>新增付费用户：<font color="green">{$new_pay_people|default="0"}</font></td> &nbsp;&nbsp;
+	<td>消费用户（去重）：<font color="green">{$consume_people_sum|default="0"}</font></td> &nbsp;&nbsp;
+	<td>消费总额：<font color="green">{$consume_sum|default="0"}</font></td> &nbsp;&nbsp;
+	<td>消费ARPPU：<font color="green">{$consume_arppu|default="0"}</font></td> &nbsp;&nbsp;
+</tr>
+<table id="datatable">
+	<thead>
+		<tr>
+			<th>日期</th>
+            <th>新增用户</th>
+			<th>访问次数</th>
+			<th>充值用户</th>
+			<th>充值总额</th>
+			<th>ARPPU</th>
+			<th>新增付费用户</th>
+			<th>消费用户</th>
+			<th>消费总额</th>
+			<th>消费ARPPU</th>
+		</tr>
+	</thead>
+	<tbody>
+		<volist name="list" id="data">
+		<tr>
+			<td>{$data.info}</td>
+			<td>{$data.new_people}</td>
+			<td>{$data.visit}</td>
+			<td>{$data.recharge_people}</td>
+			<td>{$data.recharge_sum}</td>
+			<td>{$data.recharge_arppu}</td>
+			<td>{$data.new_pay}</td>
+			<td>{$data.consume_people}</td>
+			<td>{$data.consume_sum}</td>
+			<td>{$data.consume_arppu}</td>
+		</tr>
+		</volist>
+	</tbody>
+</table>
+  	 <!-- 分页 -->
+        <div class="page">
+			{$page}
+        </div>
+	</div>
+</block>
+
+<block name="script">
+ <script type="text/javascript">
+      
+            //导航高亮
+            highlight_subnav('{:U('index')}');
+            //点击排序
+        	$('.list_sort').click(function(){
+        		var url = $(this).attr('url');
+        		var ids = $('.ids:checked');
+        		var param = '';
+        		if(ids.length > 0){
+        			var str = new Array();
+        			ids.each(function(){
+        				str.push($(this).val());
+        			});
+        			param = str.join(',');
+        		}
+
+        		if(url != undefined && url != ''){
+        			window.location.href = url + '/ids/' + param;
+        		}
+        	});
+        });
+    </script>
+</block>

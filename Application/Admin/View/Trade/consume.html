@@ -1,0 +1,169 @@
+<extend name="Public/base"/>
+
+<block name="body">
+<div class="main-title">
+		<h2>{$title}</h2>
+	</div>
+		
+<!-- 按钮工具栏 -->
+	<div class="cf">
+
+		<!-- 高级搜索 -->
+		<div class="search-form fr cf">
+			<div class="sleft">
+				<!-- <input type="text" name="input" class="search-input" value="" placeholder="请输入用户名或ID"> -->
+				<a class="sch-btn" href="javascript:;" id="search" url="{:U('Trade/consume')}"><i class="btn-search"></i></a>
+			</div>
+            <div class="btn-group-click adv-sch-pannel fl">
+                <button class="btn">高 级<i class="btn-arrowdown"></i></button>
+                <div class="dropdown cf">
+                	<div class="row">
+                		<label>时间：</label>
+                		<input type="text" id="start_time" name="start_time" class="text input-2x" value="" placeholder="起始时间" /> -
+                		<input type="text" id="end_time" name="end_time" class="text input-2x" value="" placeholder="结束时间" />
+                	</div>
+                </div>
+            </div>
+		</div>
+	</div>
+	 <style type="text/css">
+	#test li{
+		float:left;
+		width:100px;
+	}
+	</style>
+	<ul id='test'>
+		<li><input type="radio" name="type" value="1" checked="checked"/>新增用户</li>
+		<li><input type="radio" name="type" value="2" />活跃用户</li>
+		<li><input type="radio" name="type" value="3" />消费用户</li>
+		<li><input type="radio" name="type" value="4" />消费总额</li>
+		<li><input type="radio" name="type" value="5" />消费ARPU</li>
+		<li><input type="radio" name="type" value="6" />消费ARPPU</li>
+		<li><input type="radio" name="type" value="7" />首次消费用户</li>
+		<li><input type="radio" name="type" value="8" />首次消费总额</li>
+		<li><input type="radio" name="type" value="9" />首次消费ARPU</li>
+	</ul>
+	<div class="data-table table-striped" style="padding-top: 30px;">
+		<div id="container" style=" height: 400px; width: 95%; margin: 0 auto">
+
+		</div>
+		<script type="text/javascript">
+
+
+			$('.radio').click(function(){
+				var type1=$(this).val();
+				$.ajax({
+					type:'post',
+					url:"{:U('Distribution/graph')}",
+					data:{
+						type:type1
+					},
+					cache:false,
+					async:false,
+					dataType:'json',
+					timeout:60000,
+					beforeSend: function(){
+						$(".loading").html("<img src='images/loding.gif'/><br>正在加载中...");
+					},
+					success:function(data){
+
+
+						//var onelevel_count = '['+data.onelevel_count+']';
+						var atime =data.atime;
+						var	onelevel_count =data.onelevel_count;
+						var aname=data.aname;
+						alert(aname)
+
+						// 基于准备好的dom，初始化echarts实例
+						var myChart = echarts.init(document.getElementById('container'));
+						// 指定图表的配置项和数据
+						option = {
+
+							tooltip : {
+								trigger: 'axis'
+							},
+							legend: {
+								data:aname
+							},
+							grid: {
+								left: '3%',
+								right: '4%',
+								bottom: '3%',
+								containLabel: true
+							},
+							toolbox: {
+								feature: {
+									saveAsImage: {}
+								}
+							},
+							xAxis : [
+								{
+									type : 'category',
+									boundaryGap : false,
+									data :aname
+								}
+							],
+							yAxis : [
+								{
+									type : 'value'
+								}
+							],
+							series : [
+								{
+									name:'1991-01-21',
+									type:'line',
+									stack: '总量',
+									data:onelevel_count
+								},
+
+							]
+						};
+						// 使用刚指定的配置项和数据显示图表。
+						myChart.setOption(option);
+					}
+				})
+			})
+
+
+
+
+		</script>
+
+		<table id="datatable">
+			<thead>
+			<tr>
+				<th>日期</th>
+				<th>新增用户</th>
+				<th>活跃用户</th>
+				<th>一级好友消费</th>
+				<th>二级好友消费</th>
+				<th>获得佣金</th>
+				<th>提现到银行卡</th>
+				<th>转账到帐号</th>
+				<th>消费佣金总额</th>
+				<th>剩余可用佣金</th>
+			</tr>
+			</thead>
+			<tbody>
+			<volist name="list" id="data">
+				<tr>
+					<td>{$data.atime}</td>
+					<td>{$data.onelevel_count}</td>
+					<td>{$data.twolevel_count}</td>
+					<td>{$data.one_consumption}</td>
+					<td>{$data.two_consumption}</td>
+					<td>{$data.sum_commission}</td>
+					<td>{$data.withdrawals}</td>
+					<td>{$data.accounts}</td>
+					<td>{$data.sum_cp}</td>
+					<td>{$data.surplus_commission}</td>
+				</tr>
+			</volist>
+			</tbody>
+		</table>
+		<!-- 分页 -->
+		<div class="page">
+			{$page}
+		</div>
+	</div>
+</block>

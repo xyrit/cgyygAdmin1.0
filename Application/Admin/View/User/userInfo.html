@@ -1,0 +1,83 @@
+<extend name="Public/base" />
+
+<block name="body">
+
+	<div class="main-title">
+		<h2>用户详情 </h2>
+	</div>
+	<div class="cf">
+		<div class="fl">
+			<a class="btn" href="{:U('User/userInfo?uid='.$data['uid'])}">用户详情</a>
+			<a class="btn" href="{:U('User/userInfo_commissionList?uid='.$data['uid'])}">佣金来源</a>
+			<a class="btn" href="{:U('User/consumptionsList?uid='.$data['uid'])}">佣金消费</a>
+			<a class="btn" href="{:U('User/refereeList?uid='.$data['uid'])}">推荐人</a>
+		</div>
+		<div class="main-title">
+		</div>
+	</div>
+	<!-- 表单 -->
+	<form id="form" action="{:U('editCommission')}" method="post" class="form-horizontal">
+		<div class="form-item cf">
+			<label class="item-label">昵称<span class="check-tips"></span></label>
+			<div class="controls">
+				{$data.nickname}
+			</div>
+
+			<label class="item-label">头像<span class="check-tips"></span></label>
+			<div class="controls">
+				<img src="{$data.face}" style="width: 60px; height: 60px;"/>
+			</div>
+		</div>
+		<div class="form-item cf">
+			<label class="item-label">手机<span class="check-tips"></span></label>
+			<div class="controls">
+				{$data.mobile}
+			</div>
+		<div class="form-item cf">
+			<label class="item-label">积分<span class="check-tips"></span></label>
+			<div class="controls">
+				{$data.score}
+			</div>
+		</div>
+		<div class="form-item cf">
+			<label class="item-label">登录次数<span class="check-tips"></span></label>
+			<div class="controls">
+				{$data.login}
+			</div>
+		</div>
+		<div class="form-item cf">
+			<label class="item-label">最后登陆时间<span class="check-tips"></span></label>
+			<div class="controls">
+				{$data.last_login_time|date="Y-m-d H:i:s",###}
+			</div>
+		</div>
+		<div class="form-item cf">
+			<label class="item-label">佣金余额:<span class="check-tips"></span></label>
+			<div class="controls">
+				{$data.brokerage}元
+
+			</div>
+		</div>
+		<div class="form-item cf">
+			<label class="item-label">佣金比例设置<span class="check-tips"></span></label>
+			<div class="controls">
+			 一级比例:	<input style="width: 100px;" type="text" class="text input-large" name="oneColumn" value="{$data.commission_proportion_1}">
+			 二级比例:	<input style="width: 100px" type="text" class="text input-large" name="twoColunm" value="{$data.commission_proportion_2}">
+			</div>
+		</div>
+		<div class="form-item">
+			<input type="hidden" name="uid" value="{$data.uid}"/>
+			<button type="submit" class="btn submit-btn ajax-post" target-form="form-horizontal">确 定</button>
+			<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+		</div>
+	</form>
+</block>
+
+<block name="script">
+<script type="text/javascript" src="__STATIC__/uploadify/jquery.uploadify.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+	Think.setValue('type',{$type|default=1});
+    //导航高亮
+    highlight_subnav('{:U('User/action')}');
+</script>
+</block>

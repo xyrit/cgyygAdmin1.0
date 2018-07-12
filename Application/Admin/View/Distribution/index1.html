@@ -1,0 +1,209 @@
+<extend name="Public/base"/>
+
+<block name="body">
+	<load href='__PUBLIC__/Admin/js/echarts.min.js' />
+<div class="main-title">
+		<h2>{$title}(今天是{$dtime})</h2>
+	</div>
+
+<!-- 按钮工具栏 -->
+	<div class="cf">
+
+		<!-- 高级搜索 -->
+		<div class="search-form fr cf">
+			 <div class="sleft">
+				<!-- <input type="text" name="input" class="search-input" value="" placeholder="请输入用户名或ID"> -->
+				<a class="sch-btn" href="javascript:;" id="search" url="{:U('Key/index')}"><i class="btn-search"></i></a>
+			</div>
+            <div class="btn-group-click adv-sch-pannel fl">
+                <button class="btn">高 级<i class="btn-arrowdown"></i></button>
+                <div class="dropdown cf">
+                	<div class="row">
+                		<label>时间：</label>
+                		<input type="text" id="start_time" name="start_time" class="text input-2x" value="" placeholder="起始时间" /> -
+                		<input type="text" id="end_time" name="end_time" class="text input-2x" value="" placeholder="结束时间" />
+                	</div>
+                </div>
+            </div>
+		</div>
+	</div>
+	 <style type="text/css">
+	#test li{
+		float:left;
+		width:100px;
+	}
+	</style>
+	<ul id='test'>
+		<li><input class="radio" type="radio" name="type" value="1" checked="checked"/>一级好友数</li>
+		<li><input class="radio" type="radio" name="type" value="2" />二级好友数</li>
+		<li><input class="radio" type="radio" name="type" value="3" />一级好友消费</li>
+		<li><input class="radio" type="radio" name="type" value="4" />二级好友消费</li>
+		<li><input class="radio" type="radio" name="type" value="5" />好友消费总额</li>
+		<li><input class="radio" type="radio" name="type" value="6" />获得佣金</li>
+		<li><input class="radio" type="radio" name="type" value="7" />提现到银行卡</li>
+		<li><input class="radio" type="radio" name="type" value="8" />转账到帐号</li>
+		<li><input class="radio" type="radio" name="type" value="9" />消费佣金总额</li>
+		<li><input class="radio" type="radio" name="type" value="10" />剩余可用佣金</li>
+	</ul>
+
+
+	<div class="data-table table-striped" style="padding-top: 30px;">
+		<div id="container" style=" height: 400px; width: 95%; margin: 0 auto">
+
+	</div>
+		<script type="text/javascript">
+
+
+			$('.radio').click(function(){
+				var type1=$(this).val();
+				var arr=new Array();
+
+				$.post("{:U('Distribution/graph')}",{type:type1},function(result){
+
+				//	var time=result['atime'];
+				//	var data1=result.onelevel_count;
+
+					alert(result);
+					arr=['1991-01-21','1991-01-21','1991-01-21','1991-01-21'];
+
+
+
+				});
+			})
+
+
+
+
+		</script>
+
+<table id="datatable">
+	<thead>
+		<tr>
+			<th>日期</th>
+            <th>一级好友数</th>
+			<th>二级好友数</th>
+			<th>一级好友消费</th>
+			<th>二级好友消费</th>
+			<th>获得佣金</th>
+			<th>提现到银行卡</th>
+			<th>转账到帐号</th>
+			<th>消费佣金总额</th>
+			<th>剩余可用佣金</th>
+		</tr>
+	</thead>
+	<tbody>
+		<volist name="list" id="data">
+		<tr>
+			<td>{$data.atime}</td>
+			<td>{$data.onelevel_count}</td>
+			<td>{$data.twolevel_count}</td>
+			<td>{$data.one_consumption}</td>
+			<td>{$data.two_consumption}</td>
+			<td>{$data.sum_commission}</td>
+			<td>{$data.withdrawals}</td>
+			<td>{$data.accounts}</td>
+			<td>{$data.sum_cp}</td>
+			<td>{$data.surplus_commission}</td>
+		</tr>
+		</volist>
+	</tbody>
+</table>
+  	 <!-- 分页 -->
+        <div class="page">
+			{$page}
+        </div>
+	</div>
+</block>
+
+<block name="script">
+ <link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" status="text/css">
+<php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" status="text/css">';</php>
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" status="text/css">
+<script status="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script status="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script status="text/javascript">
+     $(function(){
+	//搜索功能
+	$("#search").click(function(){
+		var url = $(this).attr('url');
+		var status = $("#sch-sort-txt").attr("data");
+        var query  = $('.search-form').find('input').serialize();
+        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+        query = query.replace(/^&/g,'');
+		if(status != ''){
+			query = 'status=' + status + "&" + query;
+        }
+        if( url.indexOf('?')>0 ){
+            url += '&' + query;
+        }else{
+            url += '?' + query;
+        }
+		window.location.href = url;
+	});
+
+	/* 状态搜索子菜单 */
+	$(".search-form").find(".drop-down").hover(function(){
+		$("#sub-sch-menu").removeClass("hidden");
+	},function(){
+		$("#sub-sch-menu").addClass("hidden");
+	});
+	$("#sub-sch-menu li").find("a").each(function(){
+		$(this).click(function(){
+			var text = $(this).text();
+			$("#sch-sort-txt").text(text).attr("data",$(this).attr("value"));
+			$("#sub-sch-menu").addClass("hidden");
+		})
+	});
+
+	//只有一个模型时，点击新增
+	$('.document_add').click(function(){
+		var url = $(this).attr('url');
+		if(url != undefined && url != ''){
+			window.location.href = url;
+		}
+	});
+
+	//点击排序
+	$('.list_sort').click(function(){
+		var url = $(this).attr('url');
+		var ids = $('.ids:checked');
+		var param = '';
+		if(ids.length > 0){
+			var str = new Array();
+			ids.each(function(){
+				str.push($(this).val());
+			});
+			param = str.join(',');
+		}
+
+		if(url != undefined && url != ''){
+			window.location.href = url + '/ids/' + param;
+		}
+	});
+
+    //回车自动提交
+    $('.search-form').find('input').keyup(function(event){
+        if(event.keyCode===13){
+            $("#search").click();
+        }
+    });
+
+    $('#start_time').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+	    minView:2,
+	    autoclose:true
+    });
+
+    $('#end_time').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+	    minView:2,
+	    autoclose:true
+    });
+})
+            //导航高亮
+            highlight_subnav('{:U('index')}');
+
+    </script>
+</block>

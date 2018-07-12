@@ -1,0 +1,243 @@
+<extend name="Public/base"/>
+
+<block name="body">
+<div class="main-title">
+		<h2>{$title}(今天是{$dtime})</h2>
+	</div>
+		
+<!-- 按钮工具栏 -->
+	<div class="cf">
+
+		<!-- 高级搜索 -->
+		<div class="search-form fr cf">
+			<div class="sleft">
+				<!-- <input type="text" name="input" class="search-input" value="" placeholder="请输入用户名或ID"> -->
+				<a class="sch-btn" href="javascript:;" id="search" url="{:U('UserReport/index')}"><i class="btn-search"></i></a>
+			</div>
+			-->
+            <div class="btn-group-click adv-sch-pannel fl">
+                <button class="btn">高 级<i class="btn-arrowdown"></i></button>
+                <div class="dropdown cf">
+                	<div class="row">
+                		<label>时间：</label>
+                		<input type="text" id="start_time" name="start_time" class="text input-2x" value="" placeholder="起始时间" /> -
+                		<input type="text" id="end_time" name="end_time" class="text input-2x" value="" placeholder="结束时间" />
+                	</div>
+                </div>
+            </div>
+		</div>
+	</div>
+	 <style type="text/css">
+	#test li{
+		float:left;
+		width:100px;
+	}
+	</style>
+	<ul id='test'>
+		<li><input type="radio" name="type" value="1" checked="checked"/>新增用户</li>
+		<li><input type="radio" name="type" value="2" />访问次数</li>
+		<li><input type="radio" name="type" value="3" />活跃用户</li>
+		<li><input type="radio" name="type" value="4" />充值用户</li>
+		<li><input type="radio" name="type" value="5" />充值总额</li>
+		<li><input type="radio" name="type" value="6" />ARPPU</li>
+		<li><input type="radio" name="type" value="7" />新增付费用户</li>
+		<li><input type="radio" name="type" value="8" />消费用户</li>
+		<li><input type="radio" name="type" value="9" />消费总额</li>
+		<li><input type="radio" name="type" value="10" />消费ARPPU</li>
+	</ul>
+	<div class="data-table table-striped"><div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+	<script type="text/javascript">
+$(function () {
+    $('#container').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: 1,//null,
+            plotShadow: false
+        },
+        title: {
+            text: '{$title}'
+        },
+        tooltip: {
+    	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                       color: 'deeppink',
+									fontSize: '14px',
+									padding: '4px'
+                    }
+                }
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: '占比',
+            data: [
+                ['退货{$back}元 ',   {$b}],
+                ['换货{$change}元 ',      {$c}],
+				 ['申请取消{$cancel}元 ',      {$d}],
+                {
+                    name: '销售额{$total}元 ',
+                    y: {$a},
+                    sliced: true,
+                    selected: true
+                },
+                
+               
+            ]
+        }]
+    });
+});
+    
+
+		</script>	
+		<tr>
+	<td>新增用户总数：<font color="green">{$new_people_sum|default="0"}</font></td> &nbsp;&nbsp;
+	<td>新用户付费总人数：<font color="green">{$register_consume|default="0"}</font></td> &nbsp;&nbsp;
+	<td>新用户付费总额：<font color="green">{$register_consume_sum|default="0"}</font></td> &nbsp;&nbsp;
+	<td>新用户付费ARPPU:<font color="green">{$register_consume_arppu|default="0"}</font></td> &nbsp;&nbsp;
+	<form  action="{:U('UserReport/addExcel')}" method='post' class="form-horizontal" id = 'form'>
+			<input type="hidden" name="listAll" value="{$listAll}">
+			   <button class="btn submit-btn ajax-post" id="submit"
+			 type="submit" target-form="form-horizontal" style="float:right">EXCEL导出</button> 
+			 <!--
+			  <button class="btn submit-btn " id="submit"
+			 	type="submit" target-form="form-horizontal">确 定</button> 
+			 --> 
+	</form>
+</tr>
+<table id="datatable">
+	<thead>
+		<tr>
+			<th>日期</th>
+            <th>新增用户</th>
+			<th>累积用户</th>
+			<th>新用户付费人数</th>
+			<th>新用户付费总额</th>
+			<th>新用户付费ARPPU</th>
+			<th>次日留存率</th>
+			<th>7日留存率</th>
+			<th>30日留存率</th>
+		</tr>
+	</thead>
+	<tbody>
+		<volist name="list" id="data">
+		<tr>
+			<td>{$data.info}</td>
+			<td>{$data.new_people}</td>
+			<td>{$data.register_sum}</td>
+			<td>{$data.register_consume}</td>
+			<td>{$data.register_consume_sum}</td>
+			<td>{$data.register_consume_arppu}</td>
+			<td>{$data.one_left}</td>
+			<td>{$data.seven_left}</td>
+			<td>{$data.thirty_left}</td>
+		</tr>
+		</volist>
+	</tbody>
+</table>
+  	 <!-- 分页 -->
+        <div class="page">
+			{$page}
+        </div>
+	</div>
+</block>
+
+<block name="script">
+ <link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" status="text/css">
+<php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" status="text/css">';</php>
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" status="text/css">
+<script status="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script status="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script status="text/javascript">
+     $(function(){
+	//搜索功能
+	$("#search").click(function(){
+		var url = $(this).attr('url');
+		var status = $("#sch-sort-txt").attr("data");
+        var query  = $('.search-form').find('input').serialize();
+        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+        query = query.replace(/^&/g,'');
+		if(status != ''){
+			query = 'status=' + status + "&" + query;
+        }
+        if( url.indexOf('?')>0 ){
+            url += '&' + query;
+        }else{
+            url += '?' + query;
+        }
+		window.location.href = url;
+	});
+
+	/* 状态搜索子菜单 */
+	$(".search-form").find(".drop-down").hover(function(){
+		$("#sub-sch-menu").removeClass("hidden");
+	},function(){
+		$("#sub-sch-menu").addClass("hidden");
+	});
+	$("#sub-sch-menu li").find("a").each(function(){
+		$(this).click(function(){
+			var text = $(this).text();
+			$("#sch-sort-txt").text(text).attr("data",$(this).attr("value"));
+			$("#sub-sch-menu").addClass("hidden");
+		})
+	});
+
+	//只有一个模型时，点击新增
+	$('.document_add').click(function(){
+		var url = $(this).attr('url');
+		if(url != undefined && url != ''){
+			window.location.href = url;
+		}
+	});
+
+	//点击排序
+	$('.list_sort').click(function(){
+		var url = $(this).attr('url');
+		var ids = $('.ids:checked');
+		var param = '';
+		if(ids.length > 0){
+			var str = new Array();
+			ids.each(function(){
+				str.push($(this).val());
+			});
+			param = str.join(',');
+		}
+
+		if(url != undefined && url != ''){
+			window.location.href = url + '/ids/' + param;
+		}
+	});
+
+    //回车自动提交
+    $('.search-form').find('input').keyup(function(event){
+        if(event.keyCode===13){
+            $("#search").click();
+        }
+    });
+
+    $('#start_time').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+	    minView:2,
+	    autoclose:true
+    });
+
+    $('#end_time').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+	    minView:2,
+	    autoclose:true
+    });
+})
+            //导航高亮
+            highlight_subnav('{:U('index')}');
+            
+    </script>
+</block>

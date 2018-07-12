@@ -1,0 +1,79 @@
+<extend name="Public/base"/>
+
+<block name="body">
+    <div class="main-title">
+        <h2>{$meta_title}[ <strong>全部数量</strong>{$count}]</h2>
+    </div>
+
+    <!-- 按钮工具栏 -->
+    <div class="cf">
+        <div class="fl">
+            <!-- <a class="btn" href="{:U('add?status='.$status)}">新 增</a> -->
+            <!-- <button class="btn ajax-post confirm" url="{:U('del')}" target-form="ids">删 除</button> -->
+
+            <a class="btn" href="{:U('activityEdit')}">新增</a>
+
+
+        </div>
+    </div>
+
+    <div class="data-table table-striped">
+        <table>
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>活动ID</th>
+                <th>扫码次数</th>
+                <th>新关注</th>
+                <th>新用户</th>
+                <th>取消关注</th>
+                <th>时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <notempty name="list">
+                <volist name="list" id="vo">
+                    <tr>
+                        <td>
+
+                            {$vo.id}
+                        </td>
+                        <td>
+
+                            {$vo.activity_id}
+                        </td>
+                        <td>
+                            {$vo.sweep_number}
+                        </td>
+                        <td>
+                            {$vo.new_attention}
+                        </td>
+
+                        <td>{$vo.new_users}</td>
+                        <td>{$vo.cancel_attention}</td>
+                        <td>{$vo.time|date='Y-m-d',###}</td>
+                    </tr>
+                </volist>
+            </notempty>
+            </tbody>
+        </table>
+
+        <!-- 分页 -->
+        <div class="page">
+            {$page}
+        </div>
+    </div>
+</block>
+
+<block name="script">
+    <link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" status="text/css">
+    <php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" status="text/css">';</php>
+    <link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" status="text/css">
+    <script status="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script status="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+    <script status="text/javascript">
+        //导航高亮
+        highlight_subnav('{:U('index')}');
+
+    </script>
+</block>

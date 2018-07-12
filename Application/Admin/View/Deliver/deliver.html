@@ -1,0 +1,143 @@
+<extend name="Public/base"/>
+#tab1 table{border-right:1px solid #F00;border-bottom:1px solid #F00}
+#tab1 table td{border-left:1px solid #F00;border-top:1px solid #F00}
+<block name="body">
+	<div class="main-title">
+		<h2>
+			{$info['id']?'编辑':'新增'}订单
+		
+		</h2>
+	</div>
+	<ul class="tab-nav nav">
+	<li data-tab="tab1" class="current"><a href="javascript:void(0);">发货信息</a></li>
+	<li data-tab="tab2" ><a href="javascript:void(0);">订单详情</a>
+	
+	</li></ul>
+<div class="tab-content">						
+
+	<div id="tab1" class="tab-pane in tab1">
+	<form  action="{:U()}" method='post' class="form-horizontal" id = 'form'>
+		<!-- 传递待发货记录的编号 -->
+		<input type="hidden" name="win_id" value="{$info.id}">
+		<input type="hidden" name="uid" value="{$info.uid}">
+		<input type="hidden" name="mobile" value="{$info.mobile}">
+		<input type="hidden" name="nickname" value="{$info.nickname}">
+		<input type="hidden" name="realname" value="{$info.realname}">
+		<input type="hidden" name="cellphone" value="{$info.cellphone}">
+		<input type="hidden" name="realname" value="{$info.realname}">
+		<input type="hidden" name="take_address" value="{$info.take_address}">
+<div class="form-item">
+			<label class="item-label">快递名称<span class="check-tips">（发货的快递公司名称）</span></label>
+			<div class="controls">
+				<!-- <input type="text" class="text input-large" name="express" value="{$info.tool}"> -->
+				 <input type="text" class="text input-large" name="express_name">
+			</div>
+		</div>
+<div class="form-item">
+			<label class="item-label">快递单号<span class="check-tips">（发货的快递单号）</span></label>
+			<div class="controls">
+				<!-- <input type="text" class="text input-large" name="express_code" value="{$info.toolid}"> -->
+				<input type="text" class="text input-large" name="express_number">
+			</div>
+</div>
+<div class="form-item">
+			<label class="item-label">发货人<span class="check-tips"></span></label>
+			<div class="controls">
+				<!-- <input type="text" class="text input-large" name="send_name" value="{:C('SHOPNAME')}"> -->
+				<input type="text" class="text input-large" name="deliver_name">
+			</div>
+</div>
+<div class="form-item">
+			<label class="item-label">发货人联系方式<span class="check-tips"></span></label>
+			<div class="controls">
+				<!-- <input type="text" class="text input-large" name="send_contact" value="{:C('CONTACT')}"> -->
+				<input type="text" class="text input-large" name="deliver_phone" >
+			</div>
+</div>
+<div class="form-item">
+			<label class="item-label">发货人地址<span class="check-tips"></span></label>
+			<div class="controls">
+				<!-- <input type="text" class="text input-large" name="send_address" value="{:C('ADDRESS')}"> -->
+				<input type="text" class="text input-large" name="deliver_address" >
+			</div>
+</div>
+
+<div class="form-item">
+		<!-- 	<label class="item-label">状态<span class="check-tips">（订单状态）</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="status" value="2">
+			</div>
+		-->
+		</div>
+		<div class="form-item">
+			<input type="hidden" name="id" value="{$info.id|default=''}">
+			   <button class="btn submit-btn ajax-post" id="submit"
+			 type="submit" target-form="form-horizontal">确 定</button> 
+			 <!--
+			  <button class="btn submit-btn " id="submit"
+			 	type="submit" target-form="form-horizontal">确 定</button> 
+			 --> 
+			<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+		</div>
+	</form>
+	<script type="text/javascript">
+		/*$(function () {
+			$('#submit')
+			.bind('click', $('#form').serialize(),   function (data) {
+				window.open('{:U('Order/showDelivered')}');
+			})
+		})
+		*/
+	</script>
+	</div>
+	
+	<div id="tab2" class="tab-pane  tab2">
+	<table  id="table" class="gridtable" width="100%">
+        <thead>
+            <tr>
+			 <th >用户</th>
+                <th >商品</th>
+				<th >商品图片</th>
+                <th >收货信息</th>
+                <th >申请时间</th>
+            </tr>
+        </thead>  </tbody>  
+           <tr>
+		 <td align="center">
+			 <ul>
+				<li>ID：{$info.uid}</li>
+				<li>用户名：{$info.mobile}</li>
+				<li>昵称：{$info.nickname}</li>
+			</ul>
+		</td>
+                <td>(期号：{$info.lottery_id}) &nbsp;&nbsp; {$info.title}</td>
+               <td align="center"> <span class="weight"><img src="__ROOT__{$info.thumbnail}" width="100" height="50"/></span></td>
+                <td align="center">
+                	<ul>
+						<li>{$info.realname} &nbsp;&nbsp; {$info.cellphone}</li>
+						<li>{$info.take_address}</li>
+					</ul>
+                </td>
+                 <td align="center">{$info.apply_time}</td>
+                
+            </tr>
+                         </tbody></table>  <BR/>  
+		  <div >
+		  </div>
+	</div>
+</block>
+<block name="script">
+<script type="text/javascript" charset="utf-8">
+	//导航高亮
+	highlight_subnav('{:U('index')}');
+	if($('ul.tab-nav').length){
+		//当有tab时，返回按钮不显示
+		$('.btn-return').hide();
+	}
+	$(function(){
+		//支持tab
+		showTab();
+	})
+
+</script>
+</block>

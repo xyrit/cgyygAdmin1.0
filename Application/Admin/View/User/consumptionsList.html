@@ -1,0 +1,105 @@
+<extend name="Public/base" />
+
+<block name="body">
+    <!-- 标题栏 -->
+    <div class="main-title">
+        <h2>用户列表</h2>
+    </div>
+    <div class="cf">
+        <div class="fl">
+            <a class="btn" href="{:U('User/userInfo?uid='.$data['uid'])}">用户详情</a>
+            <a class="btn" href="{:U('User/userInfo_commissionList?uid='.$data['uid'])}">佣金来源</a>
+            <a class="btn" href="{:U('User/consumptionsList?uid='.$data['uid'])}">佣金消费</a>
+            <a class="btn" href="{:U('User/refereeList?uid='.$data['uid'])}">推荐人</a>
+        </div>
+        <!-- 高级搜索 -->
+        <div class="search-form fr cf">
+            <div class="sleft">
+              <select id="select">
+                  <option    <eq name="data['status']" value="99">selected="selected"</eq>  value="99">所有状态</option>
+                  <option  <eq name="data['status']" value="1">selected="selected"</eq> value="1">已到帐</option>
+                  <option  <eq name="data['status']" value="2">selected="selected"</eq> value="2">未到账</option>
+
+              </select>
+            </div>
+        </div>
+    </div>
+    <!-- 数据列表 -->
+    <div class="data-table table-striped">
+        <table class="">
+            <thead>
+            <tr>
+                <th class="">消费方式</th>
+                <th class="">状态</th>
+                <th class="">消费金额</th>
+                <th class="">消费时间</th>
+                <th class="">流水号</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <notempty name="_list">
+                <volist name="_list" id="vo">
+                    <tr>
+                        <td>  <eq name="vo.bank_id" value="0">转账<else/>提现</eq></td>
+                        <td>
+                            <if condition="$vo['consumption_status'] eq 1">
+                                <span style="color: #387C0B">已到帐</span>
+                                <else />
+                                <span style="color: #FF4E4E">未到账</span>
+                            </if>
+
+                        </td>
+                        <td>{$vo.consumption_money}</td>
+                        <td>{$vo.addtime|date="Y-m-d H:i:s",###}</td>
+                        <td><span>{$vo.seriall_number}</span></td>
+                    </tr>
+                </volist>
+                <else/>
+                <td colspan="9" class="text-center"> aOh! 暂时还没有内容! </td>
+            </notempty>
+            </tbody>
+        </table>
+    </div>
+    <div class="page">
+        {$_page}
+    </div>
+</block>
+
+<block name="script">
+    <script src="__STATIC__/thinkbox/jquery.thinkbox.js"></script>
+
+    <script type="text/javascript">
+        //搜索功能
+        $('#select').change(function () {
+
+            var status  = $(this).val();
+            var url = "{:U('User/consumptionsList?uid='.$data['uid'])}"+"&select="+status;
+            window.location.href = url;
+        })
+
+
+
+        $("#search").click(function(){
+            var url = $(this).attr('url');
+            var query  = $('.search-form').find('input').serialize();
+            query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+            query = query.replace(/^&/g,'');
+            if( url.indexOf('?')>0 ){
+                url += '&' + query;
+            }else{
+                url += '?' + query;
+            }
+            window.location.href = url;
+        });
+        //回车搜索
+        $(".search-input").keyup(function(e){
+            if(e.keyCode === 13){
+                $("#search").click();
+                return false;
+            }
+        });
+        //导航高亮
+        highlight_subnav('{:U('User/index')}');
+    </script>
+</block>
